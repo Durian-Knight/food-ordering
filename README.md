@@ -9,7 +9,11 @@ cp .env.example .env
 docker compose up --build
 ```
 
+Mở giao diện web: http://localhost:8080 (đăng nhập sẵn `khach@food.vn` / `123456`).
+
 Kiểm tra: `curl localhost:8080/health` phải trả cả 4 service `UP`.
+
+![Thanh toán lỗi, Saga hoàn kho](docs/anh/thanh-toan-loi-saga.png)
 
 ## Tài khoản mẫu
 
@@ -38,7 +42,7 @@ node scripts/concurrency-test.mjs
 ## Cấu trúc
 
 ```
-gateway/              API Gateway (:8080) — cổng duy nhất mở ra ngoài
+gateway/              API Gateway (:8080) — cổng duy nhất mở ra ngoài, phục vụ luôn giao diện web (src/public)
 auth-service/         Đăng ký, đăng nhập, JWT (:3001, auth_db)
 inventory-service/    Cửa hàng, món, tồn kho, giữ chỗ (:3002, inventory_db)
 order-service/        Đơn hàng + điều phối Saga (:3003, order_db)
@@ -56,5 +60,5 @@ Mỗi service tự tạo bảng từ `src/db/schema.sql` khi khởi động.
 - [x] Giai đoạn 2: Auth Service (đăng ký, đăng nhập, /auth/me)
 - [x] Giai đoạn 3: Inventory/Catalog + chống bán vượt + seed
 - [x] Giai đoạn 4: Order + Saga + Payment giả lập
-- [ ] Giai đoạn 5: Giao diện web
+- [x] Giai đoạn 5: Giao diện web
 - [ ] Giai đoạn 6: Test, kịch bản demo, báo cáo

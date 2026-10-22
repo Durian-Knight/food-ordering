@@ -1,0 +1,82 @@
+<!doctype html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Đặt đồ ăn</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<header>
+  <h1>🍜 Đặt đồ ăn</h1>
+  <div id="userBox"></div>
+</header>
+
+<main>
+  <section id="authView" class="card narrow" hidden>
+    <div class="tabs">
+      <button data-tab="login" class="active">Đăng nhập</button>
+      <button data-tab="register">Đăng ký</button>
+    </div>
+    <form id="authForm">
+      <label id="nameRow" hidden>Họ tên <input name="fullName"></label>
+      <label>Email <input name="email" type="email" required value="khach@food.vn"></label>
+      <label>Mật khẩu <input name="password" type="password" required minlength="6" value="123456"></label>
+      <button type="submit" class="primary" id="authSubmit">Đăng nhập</button>
+      <p class="hint">Tài khoản mẫu: khach@food.vn, chuquan@food.vn, admin@food.vn (mật khẩu 123456)</p>
+      <p class="error" id="authError"></p>
+    </form>
+  </section>
+
+  <section id="appView" hidden>
+    <div class="layout">
+      <div>
+        <div class="card">
+          <h2>Cửa hàng</h2>
+          <div id="stores" class="stores"></div>
+        </div>
+        <div class="card">
+          <div class="row">
+            <h2 id="menuTitle">Menu</h2>
+            <button id="refreshMenu" class="ghost">↻ Tải lại tồn kho</button>
+          </div>
+          <table class="menu">
+            <thead><tr><th>Món</th><th>Giá</th><th>Còn</th><th>Đang giữ</th><th></th></tr></thead>
+            <tbody id="menu"></tbody>
+          </table>
+        </div>
+      </div>
+
+      <div>
+        <div class="card">
+          <h2>Giỏ hàng</h2>
+          <ul id="cart" class="cart"></ul>
+          <p class="total">Tổng: <b id="cartTotal">0 đ</b></p>
+          <fieldset class="payopt">
+            <legend>Thanh toán (giả lập)</legend>
+            <label><input type="radio" name="pay" value="ok" checked> Thành công</label>
+            <label><input type="radio" name="pay" value="fail"> Ép lỗi (demo hoàn kho)</label>
+          </fieldset>
+          <button id="placeOrder" class="primary" disabled>Đặt món</button>
+          <div id="orderResult"></div>
+        </div>
+        <div class="card">
+          <div class="row">
+            <h2>Đơn hàng của tôi</h2>
+            <button id="refreshOrders" class="ghost">↻</button>
+          </div>
+          <ul id="orders" class="orders"></ul>
+        </div>
+      </div>
+    </div>
+  </section>
+</main>
+
+<dialog id="orderDialog">
+  <div id="orderDetail"></div>
+  <form method="dialog"><button class="primary">Đóng</button></form>
+</dialog>
+
+<script src="app.js"></script>
+</body>
+</html>

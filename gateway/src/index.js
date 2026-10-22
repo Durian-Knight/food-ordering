@@ -42,6 +42,9 @@ app.use((req, res, next) => {
   next();
 });
 
+// Giao diện web tĩnh, cùng origin với API nên không cần CORS
+app.use(express.static(new URL('./public', import.meta.url).pathname));
+
 app.get('/health', async (req, res) => {
   const results = await Promise.all(
     Object.entries(SERVICES).map(async ([name, url]) => {
