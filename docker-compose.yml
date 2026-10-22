@@ -1,0 +1,57 @@
+services:
+  postgres:
+    image: postgres:16
+    environment:
+      POSTGRES_PASSWORD: ${PG_ROOT_PASSWORD}
+      AUTH_DB_PW: ${AUTH_DB_PW}
+      INV_DB_PW: ${INV_DB_PW}
+      ORD_DB_PW: ${ORD_DB_PW}
+      PAY_DB_PW: ${PAY_DB_PW}
+    volumes:
+      - ./infra/postgres/init.sh:/docker-entrypoint-initdb.d/init.sh:ro
+      - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 5s
+      retries: 10
+
+  gateway:
+    build: ./gateway
+    ports: ["8080:8080"]
+    environment:
+      JWT_SECRET: ${JWT_SECRET}
+      AUTH_URL: http://auth-service:3001
+      INVENTORY_URL: http://inventory-service:3002
+      ORDER_URL: http://order-service:3003
+      PAYMENT_URL: http://payment-service:3004
+    depends_on: [auth-service, inventory-service, order-service, payment-service]
+
+  auth-service:
+    build: ./auth-service
+    environment:
+      DATABASE_URL: postgres://auth:${AUTH_DB_PW}@postgres:5432/auth_db
+      JWT_SECRET: ${JWT_SECRET}
+    depends_on: { postgres: { condition: service_healthy } }
+
+  inventory-service:
+    build: ./inventory-service
+    environment:
+      DATABASE_URL: postgres://inventory:${INV_DB_PW}@postgres:5432/inventory_db
+    depends_on: { postgres: { condition: service_healthy } }
+
+  order-service:
+    build: ./order-service
+    environment:
+      DATABASE_URL: postgres://orders:${ORD_DB_PW}@postgres:5432/order_db
+      INVENTORY_URL: http://inventory-service:3002
+      PAYMENT_URL: http://payment-service:3004
+    depends_on: { postgres: { condition: service_healthy } }
+
+  payment-service:
+    build: ./payment-service
+    environment:
+      DATABASE_URL: postgres://payment:${PAY_DB_PW}@postgres:5432/payment_db
+    depends_on: { postgres: { condition: service_healthy } }
+
+volumes:
+  pgdata:
