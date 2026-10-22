@@ -69,5 +69,21 @@ app.use((err, req, res, next) => {
   res.status(500).json({ error: 'INTERNAL_ERROR' });
 });
 
+// Tài khoản mẫu cho demo (mật khẩu đều là 123456). Thứ tự chèn quyết định id:
+// chủ quán phải có id = 2 vì seed của Inventory gán cửa hàng cho owner_id = 2.
+const SEED_USERS = [
+  ['admin@food.vn', 'Quản trị viên', 'ADMIN'],
+  ['chuquan@food.vn', 'Chủ quán', 'STORE_OWNER'],
+  ['khach@food.vn', 'Khách hàng', 'CUSTOMER'],
+];
+
 await migrate();
+const { rows: countRows } = await pool.query('SELECT count(*)::int AS n FROM users');
+if (countRows[0].n === 0) {
+  const hash = await bcrypt.hash('123456', 10);
+  for (const [email, fullName, role] of SEED_USERS) {
+    await pool.query('INSERT INTO users (email, password_hash, full_name, role) VALUES ($1, $2, $3, $4)', [email, hash, fullName, role]);
+  }
+  console.log('Đã tạo tài khoản mẫu');
+}
 app.listen(PORT, () => console.log(`${SERVICE} chạy ở cổng ${PORT}`));

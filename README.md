@@ -11,6 +11,12 @@ docker compose up --build
 
 Kiểm tra: `curl localhost:8080/health` phải trả cả 4 service `UP`.
 
+## Tài khoản mẫu
+
+Mật khẩu đều là `123456`: `admin@food.vn` (ADMIN), `chuquan@food.vn` (STORE_OWNER, chủ 2 cửa hàng mẫu), `khach@food.vn` (CUSTOMER).
+
+Muốn xóa sạch dữ liệu để seed lại: `docker compose down -v`.
+
 ## Cấu trúc
 
 ```
@@ -30,7 +36,7 @@ Mỗi service tự tạo bảng từ `src/db/schema.sql` khi khởi động.
 
 - [x] Giai đoạn 1: khung 5 service, Docker Compose, database per service, `/health`, Gateway định tuyến + JWT
 - [x] Giai đoạn 2: Auth Service (đăng ký, đăng nhập, /auth/me)
-- [ ] Giai đoạn 3: Inventory/Catalog + chống bán vượt + seed
+- [x] Giai đoạn 3: Inventory/Catalog + chống bán vượt + seed
 - [ ] Giai đoạn 4: Order + Saga + Payment giả lập
 - [ ] Giai đoạn 5: Giao diện web
 - [ ] Giai đoạn 6: Test, kịch bản demo, báo cáo
