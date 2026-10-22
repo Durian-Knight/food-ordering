@@ -1,8 +1,8 @@
 CREATE TABLE IF NOT EXISTS orders (
   id           SERIAL PRIMARY KEY,
   user_id      INT NOT NULL,
-  store_id     INT NOT NULL,
-  total_amount INT NOT NULL,
+  store_id     INT,             -- biết sau khi Inventory giữ chỗ xong
+  total_amount INT NOT NULL DEFAULT 0,
   status       TEXT NOT NULL CHECK (status IN ('PENDING', 'STOCK_RESERVED', 'COMPENSATING', 'CONFIRMED', 'CANCELLED')),
   cancel_reason TEXT,
   created_at   TIMESTAMPTZ NOT NULL DEFAULT now(),

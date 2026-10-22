@@ -8,6 +8,12 @@ const PORT = process.env.PORT || 3002;
 const app = express();
 app.use(express.json());
 
+// id trên URL phải là số, tránh lỗi kiểu dữ liệu từ Postgres
+app.param(['id', 'orderId'], (req, res, next, value) => {
+  if (!/^\d+$/.test(value)) return res.status(404).json({ error: 'NOT_FOUND' });
+  next();
+});
+
 app.get('/health', async (req, res) => {
   try {
     await pool.query('SELECT 1');
