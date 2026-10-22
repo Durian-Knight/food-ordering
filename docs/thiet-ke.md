@@ -73,6 +73,11 @@ stateDiagram-v2
 | 3 | Payment `POST /payments` | (bước cuối, không cần hoàn tác) |
 | 4 | Inventory `POST /reservations/:orderId/confirm`: `reserved -= qty` | không có |
 
+Giới hạn của bản đơn giản (không có retry/job phục hồi):
+- Nếu hoàn kho thất bại (Inventory sập đúng lúc đó), đơn dừng ở `COMPENSATING` và `saga_log` ghi `RESERVE_STOCK COMPENSATE FAIL`, cần xử lý tay.
+- Nếu confirm thất bại sau khi đã thu tiền, đơn vẫn `CONFIRMED` (tiền đã thu), `saga_log` ghi `CONFIRM_STOCK FAIL`.
+- Nếu gọi Inventory bị timeout lúc giữ chỗ, Order gọi release luôn cho chắc rồi hủy đơn.
+
 ### Sequence diagram: Payment lỗi sau khi Inventory đã trừ kho
 
 ```mermaid

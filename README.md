@@ -17,6 +17,24 @@ Mật khẩu đều là `123456`: `admin@food.vn` (ADMIN), `chuquan@food.vn` (ST
 
 Muốn xóa sạch dữ liệu để seed lại: `docker compose down -v`.
 
+## Thử nhanh bằng curl
+
+```bash
+TOKEN=$(curl -s -X POST localhost:8080/api/auth/login -H 'content-type: application/json' \
+  -d '{"email":"khach@food.vn","password":"123456"}' | sed 's/.*"accessToken":"\([^"]*\)".*/\1/')
+
+# Đặt món thành công → CONFIRMED (201)
+curl -X POST localhost:8080/api/orders -H "Authorization: Bearer $TOKEN" -H 'content-type: application/json' \
+  -d '{"items":[{"itemId":2,"qty":2}]}'
+
+# Ép thanh toán lỗi → kho được hoàn lại, đơn CANCELLED (409), xem sagaLog trong kết quả
+curl -X POST localhost:8080/api/orders -H "Authorization: Bearer $TOKEN" -H 'content-type: application/json' \
+  -d '{"items":[{"itemId":2,"qty":2}],"simulatePaymentFail":true}'
+
+# 50 đơn cùng lúc tranh 10 phần → đúng 10 thành công
+node scripts/concurrency-test.mjs
+```
+
 ## Cấu trúc
 
 ```
@@ -37,6 +55,6 @@ Mỗi service tự tạo bảng từ `src/db/schema.sql` khi khởi động.
 - [x] Giai đoạn 1: khung 5 service, Docker Compose, database per service, `/health`, Gateway định tuyến + JWT
 - [x] Giai đoạn 2: Auth Service (đăng ký, đăng nhập, /auth/me)
 - [x] Giai đoạn 3: Inventory/Catalog + chống bán vượt + seed
-- [ ] Giai đoạn 4: Order + Saga + Payment giả lập
+- [x] Giai đoạn 4: Order + Saga + Payment giả lập
 - [ ] Giai đoạn 5: Giao diện web
 - [ ] Giai đoạn 6: Test, kịch bản demo, báo cáo
